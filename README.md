@@ -71,6 +71,7 @@ Vanilla HTML, CSS and JavaScript in a single, fully commented file. No framework
 | `manifest.json` | App name, colours and icons for installation |
 | `service-worker.js` | Offline support and instant updates |
 | `icon-192.png`, `icon-512.png`, `apple-touch-icon.png`, `favicon-32.png` | App icons |
+| `.nojekyll` | Tells GitHub Pages to publish the files as they are |
 
 ## Disclaimer
 
