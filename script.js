@@ -664,6 +664,7 @@
     }
     let start = null;
     duration = duration || 700;
+    // One frame: the eased value for the time elapsed, until the target is reached.
     function tick(ts) {
       if (start === null) start = ts;
       const p = Math.min((ts - start) / duration, 1);
@@ -867,14 +868,17 @@
     const minSlot = 2 * R[maxG] + (narrow ? 4 : 14); // room each place of the deepest generation needs
     const W = Math.max(cw, Math.pow(2, maxG) * minSlot + PAD * 2);
     const H = TOP + maxG * ROW + 72;
+    // Horizontal centre of place k: generation g splits the width into 2^g equal places.
     function x(k) {
       const g = gen(k),
         first = Math.pow(2, g);
       return PAD + ((k - first + 0.5) / first) * (W - PAD * 2);
     }
+    // Vertical position of place k: one row per generation below the surface.
     function y(k) {
       return TOP + gen(k) * ROW;
     }
+    // Width of one place in generation g.
     function slotW(g) {
       return (W - PAD * 2) / Math.pow(2, g);
     }
@@ -1075,6 +1079,7 @@
       if (n > 1 && p.born !== null && (earliest === null || p.born < state.people[earliest].born))
         earliest = n;
     });
+    // One stat card.
     function card(label, value, sub) {
       return (
         `<div class="stat-card">` +
@@ -1347,6 +1352,7 @@
     const start = Math.floor(state.people[list[0]].born / 10) * 10,
       end = THIS_YEAR,
       span = Math.max(1, end - start);
+    // A year's position along the chart, as a percentage of its width.
     function pct(year) {
       return (((year - start) / span) * 100).toFixed(3);
     }
@@ -1408,6 +1414,7 @@
      RENDER: FINALE
      ============================================================================ */
 
+  /** The closing line: how many people stand behind you, and how many of them you know. */
   function renderFinale() {
     $('finaleText').innerHTML =
       `<b>${MAX_SLOT - 1} people</b> stand behind you in just five generations, and every one of them had to happen for you to be here. You know <b>${ancestorsKnown()}</b> of them.`;
@@ -1840,6 +1847,7 @@
     tip.style.top = `${y}px`;
     tip.style.opacity = 1;
   }
+  // Hides the tree tooltip.
   function hideTip() {
     $('tooltip').style.opacity = 0;
   }
@@ -1847,6 +1855,7 @@
   /** The tree: one set of delegated listeners on the SVG, which is redrawn on every change. */
   function bindTree() {
     const svg = $('rootsSvg');
+    // The person or empty place an event came from, if any.
     function nodeOf(target) {
       return target && target.closest ? target.closest('.node') : null;
     }
@@ -2023,6 +2032,7 @@
         )
       : null;
 
+  // Reveals an element when it scrolls into view (straight away without IntersectionObserver).
   function observeReveal(el) {
     if (revealObserver) revealObserver.observe(el);
     else el.classList.add('is-visible');
@@ -2046,6 +2056,7 @@
     const svg = $('heroRoots');
     const rnd = mulberry32(20260101);
     let out = '';
+    // One root: a curved stroke that splits into one or two thinner roots until depth runs out.
     function branch(x, y, angle, len, width, depth) {
       const x2 = x + Math.cos(angle) * len,
         y2 = y + Math.sin(angle) * len;
@@ -2077,14 +2088,10 @@
   const MAGNET_SELECTOR = '.btn-primary';
 
   /**
-   * Pointer effects, for mouse users only: on touch screens there is no
-   * hover, and the effects would only get in the way. A single listener for
-   * the whole page; once per animation frame it finds the card, tilting card
-   * and button under the pointer and writes the pointer's position into
-   * their CSS variables: --px / --py (the light), --rx / --ry (the tilt) and
-   * --mx / --my (the pull on a button). When the pointer leaves an element,
-   * its variables are removed and CSS eases it back. Tilt and pull are
-   * skipped with reduced motion.
+   * Pointer effects, for mouse users only. One listener for the page writes the
+   * pointer position into CSS variables on the element under it: --px / --py (the
+   * light on a card), --rx / --ry (a slight tilt), --mx / --my (a button's pull).
+   * Tilt and pull are skipped when reduced motion is on.
    */
   function setupPointerEffects() {
     if (!window.matchMedia || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
@@ -2093,12 +2100,14 @@
       queued = false,
       tilted = null,
       pulled = null;
+    // Drops a pair of CSS variables, so the element eases back to rest.
     function clear(el, a, b) {
       if (el) {
         el.style.removeProperty(a);
         el.style.removeProperty(b);
       }
     }
+    // Once per frame: light, tilt and pull for whatever is under the pointer now.
     function apply() {
       queued = false;
       const t = last.target && last.target.closest ? last.target : null;
