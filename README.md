@@ -37,8 +37,8 @@ All numbers are computed live from what you enter. Nothing is hardcoded or simul
 
 No installation required.
 
-1. Download `index.html`.
-2. Open it in any modern browser (double-click, or drag it into a browser window).
+1. Download the repository (on GitHub: **Code → Download ZIP**) and unzip it.
+2. Open `index.html` in any modern browser (double-click, or drag it into a browser window). `style.css` and `script.js` need to stay in the same folder.
 
 An internet connection is used only to load Google Fonts (Inter, Space Grotesk, Fraunces, JetBrains Mono) on first load. Everything else works offline.
 
@@ -58,18 +58,20 @@ ROOTS collects nothing and sends nothing to any server it controls. There is no 
 - **What's stored:** the people you add (names, years, places and stories) and the years-per-generation setting. They are saved only in your browser's `localStorage`, under the key `roots_state_v1`.
 - **Where it goes:** nowhere. It never leaves your device. There's no analytics, tracking, cookies or logging of any kind. "Save a copy" downloads a file to your own device; nothing is uploaded.
 - **The one external request:** Google Fonts (`fonts.googleapis.com`, `fonts.gstatic.com`), to load the site's typefaces. Like any font or image load on any website, this exposes your IP address to Google as a normal side effect of the request. ROOTS itself doesn't send Google, or anyone, any of your data.
-- **Security:** a Content Security Policy blocks any outside script or connection. All text you type is escaped before it is displayed, and saved data, and any file you load, is validated every time it is read.
+- **Security:** a Content Security Policy lets the page run only its own `script.js` and blocks any outside script or connection. All text you type is escaped before it is displayed, and saved data, and any file you load, is validated every time it is read.
 - **Clearing your data:** use the reset button (bottom-left of the site) at any time.
 
 A family tree holds information about other people too, some of them living. Keeping it on your own device, rather than on a server, is deliberate.
 
 ## Tech
 
-Vanilla HTML, CSS and JavaScript in a single, fully commented file. No frameworks, no build tools, no external JavaScript. The tree is drawn directly as SVG.
+Vanilla HTML, CSS and JavaScript in three plain, fully commented files. No frameworks, no build tools, no external JavaScript. The tree is drawn directly as SVG.
 
 | File | Purpose |
 | --- | --- |
-| `index.html` | The whole app: markup, styles and script |
+| `index.html` | The page: the markup of every section |
+| `style.css` | All the styles, organised by section, with a contents list at the top |
+| `script.js` | All the behaviour: state and saving, calculations, rendering, events |
 | `manifest.json` | App name, colours and icons for installation |
 | `service-worker.js` | Offline support and instant updates |
 | `icon-192.png`, `icon-512.png`, `apple-touch-icon.png`, `favicon-32.png` | App icons |
