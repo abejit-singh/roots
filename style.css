@@ -168,7 +168,6 @@ p {
   top: 0;
   left: 0;
   height: 3px;
-  width: 0;
   background: linear-gradient(90deg, var(--accent-lo), var(--accent-hi));
   z-index: 999;
   box-shadow: 0 0 12px var(--accent-glow);
@@ -219,7 +218,6 @@ p {
   color: var(--text-dim);
   font-family: var(--font-mono);
   font-size: 0.7rem;
-  line-height: 1.5;
   opacity: 0;
   transition: opacity 0.15s;
   transform: translate(-50%, calc(-100% - 16px));
@@ -245,7 +243,6 @@ p {
   transform: translateX(-50%) translateY(20px);
   background: rgba(30, 25, 19, 0.86);
   border: 1px solid var(--border-strong);
-  color: var(--text);
   padding: 0.9rem 1.4rem;
   border-radius: 14px;
   z-index: 400;
@@ -368,7 +365,6 @@ p {
 /* Buttons: pill-shaped. .btn-primary is the green call to action, .btn-ghost
    the quiet one, .btn-sm a smaller size. */
 .btn {
-  font-family: var(--font-sans);
   font-weight: 600;
   font-size: 0.98rem;
   padding: 1rem 1.7rem;
@@ -479,11 +475,9 @@ textarea {
   width: 100%;
   background: linear-gradient(180deg, var(--field-top), var(--field-bottom));
   border: 1px solid var(--border-strong);
-  color: var(--text);
   padding: 0.85rem 1rem;
   border-radius: 10px;
   font-size: 1rem;
-  font-family: var(--font-sans); /* 16px: smaller text makes iOS zoom in on focus */
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.6);
   transition:
     border-color 0.25s,
@@ -665,7 +659,6 @@ input[type='range']::-moz-range-track {
 }
 /* The title is lit from above: cream at the top, fading to warm grey. */
 .hero-title {
-  font-family: var(--font-display);
   font-size: clamp(3.4rem, 13vw, 8.5rem);
   font-weight: 700;
   letter-spacing: -0.035em;
@@ -812,7 +805,6 @@ input[type='range']::-moz-range-track {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  display: inline-block;
   flex-shrink: 0;
 }
 .lg.a {
@@ -866,8 +858,7 @@ input[type='range']::-moz-range-track {
    then fade out (.scrollable). */
 .soil-scroll {
   position: relative;
-  overflow-x: auto;
-  overflow-y: hidden;
+  overflow: auto hidden;
   overscroll-behavior-x: contain;
   scrollbar-width: thin;
   scrollbar-color: rgba(242, 235, 224, 0.18) transparent;
@@ -1025,7 +1016,6 @@ input[type='range']::-moz-range-track {
 }
 .node.known .disc {
   stroke: rgba(255, 255, 255, 0.22);
-  stroke-width: 1;
 }
 .node.empty .disc {
   fill: #17110c;
@@ -1046,8 +1036,6 @@ input[type='range']::-moz-range-track {
   pointer-events: none;
 }
 .node .plus {
-  font-family: var(--font-sans);
-  font-weight: 300;
   text-anchor: middle;
   pointer-events: none;
 }
@@ -1289,7 +1277,6 @@ input[type='range']::-moz-range-track {
   font-size: 0.76rem;
   color: var(--text-dim);
   text-align: right;
-  line-height: 1.5;
 }
 .gen-meta b {
   color: var(--text);
@@ -1331,7 +1318,6 @@ input[type='range']::-moz-range-track {
 }
 .origin-gen {
   font-family: var(--font-serif);
-  font-size: 1rem;
   white-space: nowrap;
 }
 .origin-text {
@@ -1499,9 +1485,7 @@ input[type='range']::-moz-range-track {
   filter: drop-shadow(0 0 18px rgba(163, 196, 111, 0.2));
 }
 .big-label {
-  color: var(--text);
   margin: 0.7rem auto 0;
-  font-size: 1rem;
 }
 .sub-line {
   font-family: var(--font-mono);
@@ -1519,7 +1503,6 @@ input[type='range']::-moz-range-track {
   max-width: 100%;
 }
 .dots i {
-  width: var(--s, 8px);
   height: var(--s, 8px);
   border-radius: 50%;
   background: rgba(242, 235, 224, 0.15);
@@ -1593,7 +1576,6 @@ input[type='range']::-moz-range-track {
 }
 .lc-label b {
   font-family: var(--font-serif);
-  font-weight: 400;
   font-size: 0.98rem;
   line-height: 1.2;
   white-space: nowrap;
@@ -1703,7 +1685,6 @@ input[type='range']::-moz-range-track {
   gap: 0.45rem;
 }
 .life-key i {
-  display: inline-block;
   width: 18px;
   height: 6px;
   border-radius: 99px;

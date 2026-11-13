@@ -32,7 +32,7 @@
   /** Generations in the tree: you (0), your parents (1) … your 3× great-grandparents (5). */
   const MAX_GEN = 5;
   /** The highest slot number, i.e. the last place of the last generation (63). */
-  const MAX_SLOT = Math.pow(2, MAX_GEN + 1) - 1;
+  const MAX_SLOT = 2 ** (MAX_GEN + 1) - 1;
   const THIS_YEAR = new Date().getFullYear();
   const MIN_YEAR = 1000;
   /** Years between generations when the tree has no birth years to measure it from (a common estimate). */
@@ -668,7 +668,7 @@
     function tick(ts) {
       if (start === null) start = ts;
       const p = Math.min((ts - start) / duration, 1);
-      el.textContent = format(from + (target - from) * (1 - Math.pow(1 - p, 3)));
+      el.textContent = format(from + (target - from) * (1 - (1 - p) ** 3));
       if (p < 1 && el._value === target) requestAnimationFrame(tick);
     }
     requestAnimationFrame(tick);
@@ -729,7 +729,7 @@
   /** The people added in generation g. */
   function knownInGen(g) {
     const out = [];
-    for (let n = Math.pow(2, g); n < Math.pow(2, g + 1); n++) if (state.people[n]) out.push(n);
+    for (let n = 2 ** g; n < 2 ** (g + 1); n++) if (state.people[n]) out.push(n);
     return out;
   }
 
@@ -866,12 +866,12 @@
     const R = narrow ? [17, 15, 12, 10, 7, 5] : [17, 15, 13, 11, 9, 7]; // disc radius by generation
     const SW = narrow ? [0, 5, 3.6, 2.6, 1.8, 1.3] : [0, 5.5, 4, 2.9, 2.1, 1.5]; // root width by generation
     const minSlot = 2 * R[maxG] + (narrow ? 4 : 14); // room each place of the deepest generation needs
-    const W = Math.max(cw, Math.pow(2, maxG) * minSlot + PAD * 2);
+    const W = Math.max(cw, 2 ** maxG * minSlot + PAD * 2);
     const H = TOP + maxG * ROW + 72;
     // Horizontal centre of place k: generation g splits the width into 2^g equal places.
     function x(k) {
       const g = gen(k),
-        first = Math.pow(2, g);
+        first = 2 ** g;
       return PAD + ((k - first + 0.5) / first) * (W - PAD * 2);
     }
     // Vertical position of place k: one row per generation below the surface.
@@ -880,7 +880,7 @@
     }
     // Width of one place in generation g.
     function slotW(g) {
-      return (W - PAD * 2) / Math.pow(2, g);
+      return (W - PAD * 2) / 2 ** g;
     }
     const fresh = lastAdded;
     lastAdded = null;
@@ -1113,7 +1113,7 @@
 
     let rows = '';
     for (let g = 1; g <= MAX_GEN; g++) {
-      const start = Math.pow(2, g);
+      const start = 2 ** g;
       let count = 0;
       let cells = '';
       for (let n = start; n < start * 2; n++) {
@@ -1268,8 +1268,8 @@
   function renderNumbers() {
     const slider = $('genSlider');
     const g = parseInt(slider.value, 10) || 10;
-    const count = Math.pow(2, g),
-      total = Math.pow(2, g + 1) - 2;
+    const count = 2 ** g,
+      total = 2 ** (g + 1) - 2;
     const interval = currentInterval(),
       stats = intervalStats();
     const roundTo = g >= 6 ? 10 : g >= 3 ? 5 : 1;
@@ -1292,7 +1292,7 @@
     }
     const dots = $('ancestorDots');
     dots.innerHTML = html;
-    dots.style.setProperty('--cols', Math.pow(2, Math.ceil(Math.log2(shown) / 2))); // as wide as it is tall, or twice as wide
+    dots.style.setProperty('--cols', 2 ** Math.ceil(Math.log2(shown) / 2)); // as wide as it is tall, or twice as wide
     dots.style.setProperty('--s', `${size}px`);
     dots.style.setProperty('--gap', `${size >= 11 ? 4 : size >= 7 ? 3 : 2}px`);
     const here = g <= MAX_GEN ? knownInGen(g).length : 0;
