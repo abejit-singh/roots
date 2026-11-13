@@ -744,8 +744,8 @@
       .map((n) => state.people[n].born)
       .filter((y) => y !== null);
     if (!ys.length) return '';
-    const a = Math.min.apply(null, ys),
-      b = Math.max.apply(null, ys);
+    const a = Math.min(...ys),
+      b = Math.max(...ys);
     return a === b ? String(a) : `${a}–${b}`;
   }
 
@@ -847,18 +847,20 @@
   function renderTree() {
     const scroller = $('soilScroll'),
       svg = $('rootsSvg');
+    // 1. The tree needs a visible box to measure, and at least you in it.
     const cw = scroller.clientWidth;
     if (!cw || !state.people[1]) return;
     const people = state.people;
+    // 2. Places to draw: everyone added, plus the empty places right above them.
     const slots = [];
     let maxG = 0;
-    let n;
-    for (n = 1; n <= MAX_SLOT; n++) {
+    for (let n = 1; n <= MAX_SLOT; n++) {
       if (people[n] || (n > 1 && people[n >> 1])) {
         slots.push(n);
         maxG = Math.max(maxG, gen(n));
       }
     }
+    // 3. Sizes: smaller rows, discs and roots on narrow screens; the drawing widens to fit the deepest generation.
     const narrow = cw < 640;
     const ROW = narrow ? 104 : 118,
       TOP = 78,
@@ -882,10 +884,12 @@
     function slotW(g) {
       return (W - PAD * 2) / 2 ** g;
     }
+    // 4. The person just added, if any, grows in with an animation.
     const fresh = lastAdded;
     lastAdded = null;
     litN = 0;
 
+    // 5. Gradients and the shadow under the discs.
     const defs =
       `<defs>` +
       `<linearGradient id="groundGlow" x1="0" x2="1">` +
@@ -924,6 +928,7 @@
     }
     bands += `<rect x="0" y="${TOP - 0.5}" width="${W}" height="1" fill="url(#groundGlow)"/>`;
 
+    // 6. Roots and nodes, one place at a time.
     let edges = '',
       nodes = '';
     slots.forEach((k) => {
@@ -1013,6 +1018,7 @@
       `<path class="leaf" d="M0-13C-5-20-15-22-21-17C-15-11-6-10 0-13Z"/>` +
       `<path class="leaf" d="M0-19C5-27 15-30 21-25C15-18 6-16 0-19Z"/></g></g>`;
 
+    // 7. On the page: centre the view if the tree is wider than the screen.
     svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
     svg.setAttribute('width', W);
     svg.setAttribute('height', H);
@@ -1022,6 +1028,7 @@
     if (W > cw && W !== lastTreeWidth) scroller.scrollLeft = (W - cw) / 2;
     lastTreeWidth = W;
     scroller.classList.toggle('scrollable', W > cw);
+    // 8. The help under the tree and the count of ancestors.
     const canHover = !!(window.matchMedia && window.matchMedia('(hover: hover)').matches);
     $('treeHelp').textContent =
       (W > cw
@@ -1048,7 +1055,7 @@
       set = {};
     for (let k = n; k >= 1; k >>= 1) set[k] = true;
     svg.classList.toggle('focusing', n > 1);
-    Array.prototype.forEach.call(svg.querySelectorAll('.edge, .node'), (el) => {
+    svg.querySelectorAll('.edge, .node').forEach((el) => {
       el.classList.toggle('lit', !!set[+el.getAttribute('data-n')]);
     });
   }
@@ -1070,6 +1077,7 @@
 
   /** The four headline figures and one row of squares per generation. */
   function renderGenerations() {
+    // 1. The figures: how many added, how deep, the earliest birth, years per generation.
     const added = ancestorsKnown();
     const deepest = deepestGen();
     const stats = intervalStats();
@@ -1088,6 +1096,7 @@
         `<span class="stat-sub">${sub}</span></div>`
       );
     }
+    // 2. The four stat cards.
     const first = earliest !== null ? state.people[earliest].born : null;
     $('genStats').innerHTML =
       card(
@@ -1111,6 +1120,7 @@
         stats.pairs ? `from ${plural(stats.pairs, 'parent–child pair')}` : 'Needs years of birth in a line'
       );
 
+    // 3. One row per generation: a square per place, lit for the people added.
     let rows = '';
     for (let g = 1; g <= MAX_GEN; g++) {
       const start = 2 ** g;
@@ -1145,6 +1155,7 @@
    * legend of every country, and a card for every town.
    */
   function renderOrigins() {
+    // 1. Count people per country and per town, in the order they first appear.
     const tally = {},
       order = [],
       towns = {},
@@ -1168,17 +1179,20 @@
         towns[tk].people.push(n);
       }
     });
+    // 2. Countries with the most people first; each one gets its colour.
     order.sort((a, b) => tally[b].count - tally[a].count || tally[a].first - tally[b].first);
     const color = {};
     order.forEach((k, i) => {
       color[k] = COUNTRY_COLORS[i % COUNTRY_COLORS.length];
     });
 
+    // 3. The sentence at the top.
     $('originsLede').innerHTML = order.length
       ? `Your known family was born in <b>${plural(order.length, 'country', 'countries')}</b>` +
         `${townOrder.length ? ` and <b>${plural(townOrder.length, 'town')}</b>` : ''}.`
       : 'Add where your family was born (open anyone in the tree above) to see where your roots are.';
 
+    // 4. One bar per generation, split by country.
     let rows = '';
     for (let g = 0; g <= MAX_GEN; g++) {
       const list = knownInGen(g);
@@ -1224,6 +1238,7 @@
         `<div class="origin-bar">${segs}</div></div>`;
     }
     $('originBars').innerHTML = rows;
+    // 5. The countries as chips.
     $('originLegend').innerHTML = order
       .map((k) => {
         const t = tally[k],
@@ -1266,6 +1281,7 @@
    * for more people), and what happens when the numbers outgrow the world.
    */
   function renderNumbers() {
+    // 1. How many ancestors g generations back, and roughly when they were born.
     const slider = $('genSlider');
     const g = parseInt(slider.value, 10) || 10;
     const count = 2 ** g,
@@ -1274,6 +1290,7 @@
       stats = intervalStats();
     const roundTo = g >= 6 ? 10 : g >= 3 ? 5 : 1;
     const about = Math.round((state.people[1].born - g * interval) / roundTo) * roundTo;
+    // 2. Slider, big number and labels.
     $('genSliderVal').textContent = g;
     paintRange(slider);
     animateNumber($('ancestorsNum'), count, fmtInt, 600);
@@ -1295,12 +1312,14 @@
     dots.style.setProperty('--cols', 2 ** Math.ceil(Math.log2(shown) / 2)); // as wide as it is tall, or twice as wide
     dots.style.setProperty('--s', `${size}px`);
     dots.style.setProperty('--gap', `${size >= 11 ? 4 : size >= 7 ? 3 : 2}px`);
+    // 3. The caption: how many of these places you have filled.
     const here = g <= MAX_GEN ? knownInGen(g).length : 0;
     $('dotsCaption').textContent =
       per > 1
         ? `Each dot stands for ${fmtInt(per)} people.`
         : `Each dot is one person.${g <= MAX_GEN ? ' The lit ones are already in your tree.' : ''}`;
 
+    // 4. Why the doubling has to stop, depending on how far back you go.
     let note;
     if (g <= MAX_GEN)
       note =
@@ -1338,6 +1357,7 @@
   function renderLifelines() {
     const you = state.people[1],
       chart = $('lifeChart');
+    // 1. Everyone with a year of birth, oldest first; a chart needs at least two lives.
     const list = knownSlots()
       .filter((n) => state.people[n].born !== null)
       .sort((a, b) => state.people[a].born - state.people[b].born || a - b);
@@ -1349,6 +1369,7 @@
       return;
     }
     chart.classList.remove('is-empty');
+    // 2. The time span: from the decade of the first birth to this year, with ticks.
     const start = Math.floor(state.people[list[0]].born / 10) * 10,
       end = THIS_YEAR,
       span = Math.max(1, end - start);
@@ -1361,6 +1382,7 @@
     for (let t = Math.ceil(start / step) * step; t <= end; t += step)
       ticks += `<div class="lc-tick" style="left:${pct(t)}%"><span>${t}</span></div>`;
 
+    // 3. A name and a bar for each life.
     let labels = '',
       bars = '';
     list.forEach((n, i) => {
@@ -1387,11 +1409,13 @@
         `<small>${escapeHtml(n === 1 ? 'You' : genTitle(n))}</small></div>`;
       bars += `<span class="${cls}" style="top:calc(${i} * var(--row));left:${pct(p.born)}%;width:${Math.max(0.8, ((stop - p.born) / span) * 100).toFixed(3)}%" data-name="${escapeHtml(displayName(n))}" data-desc="${escapeHtml(desc)}"></span>`;
     });
+    // 4. On the page.
     chart.style.setProperty('--rows', list.length);
     chart.innerHTML =
       `<div class="lc-labels">${labels}</div>` +
       `<div class="lc-plot">${ticks}<div class="lc-you-line" style="left:${pct(you.born)}%"></div>${bars}</div>`;
 
+    // 5. The sentence above: how many lives overlap with yours, and the longest one.
     const overlap = list.filter((n) => {
       const p = state.people[n];
       return n !== 1 && (p.living || (p.died !== null && p.died >= you.born));
@@ -1430,7 +1454,7 @@
     const missing = missingSlots();
     let html;
     if (missing.length) {
-      const nearest = Math.min.apply(null, missing.map(gen));
+      const nearest = Math.min(...missing.map(gen));
       const pool = missing.filter((n) => gen(n) === nearest);
       const n = pool[Math.floor(Math.random() * pool.length)];
       html =
@@ -1557,6 +1581,7 @@
    * @param {number} n
    */
   function openPanel(n) {
+    // 1. Only you, someone in the tree, or an empty place right above someone.
     if (n < 1 || n > MAX_SLOT || (n > 1 && !state.people[n] && !state.people[n >> 1])) return;
     const p = state.people[n],
       editing = !!p,
@@ -1566,6 +1591,7 @@
     const v = p || { name: '', born: null, died: null, living: false, place: '', country: '', note: '' };
     panelN = n;
     returnFocusN = n;
+    // 2. Texts for the header: badge, title, relationship.
     const badge = you ? 'You' : `${s === 'a' ? 'Father’s side' : 'Mother’s side'} · ${GEN_NAMES[g]}`;
     const title = editing ? displayName(n) : `Add ${relationLower(n)}`;
     const rel = you
@@ -1573,6 +1599,7 @@
       : editing
         ? genTitle(n) + (g > 1 ? ` · ${relationLower(n)}` : '')
         : genTitle(n);
+    // 3. The form, filled in with the saved values when editing.
     const yearAttrs = ` type="number" inputmode="numeric" min="${MIN_YEAR}" max="${THIS_YEAR}"`;
     const html =
       `<div class="panel-inner">` +
@@ -1629,6 +1656,7 @@
         ? '<div class="panel-footer"><button class="link-btn danger" id="panelRemove" type="button">Remove from the tree</button></div>'
         : '') +
       `</div>`;
+    // 4. Show it and move focus to the name field.
     const panel = $('panel');
     panel.innerHTML = html;
     panel.scrollTop = 0;
@@ -1904,6 +1932,7 @@
 
   /** Wires every control on the page. Called once at start-up. */
   function bindEvents() {
+    // Hero and setup form.
     $('ctaStart').addEventListener('click', () => {
       $('setup').scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'start' });
       setTimeout(() => {
@@ -1914,8 +1943,11 @@
       e.preventDefault();
       handleGrow();
     });
+
+    // The tree: clicks, keyboard and hover (see bindTree).
     bindTree();
 
+    // Person panel: save, its buttons, the "Still living" box; the scrim and Escape close it.
     const panel = $('panel');
     panel.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -1938,6 +1970,7 @@
       if (e.key === 'Escape') closePanel();
     });
 
+    // The numbers: the generations slider, the years-per-generation slider and its reset.
     $('genSlider').addEventListener('input', renderNumbers);
     $('intervalSlider').addEventListener('input', (e) => {
       state.interval = cleanInterval(e.target.value);
@@ -1965,6 +1998,7 @@
     });
     $('lifeChart').addEventListener('mouseleave', hideTip);
 
+    // Finale: who to ask about, and opening that person from the card.
     $('ctaAsk').addEventListener('click', askSomeone);
     $('askCard').addEventListener('click', (e) => {
       const b = e.target.closest('[data-open]');
@@ -1979,6 +2013,7 @@
       );
     });
 
+    // Save a copy / Load a copy.
     $('exportBtn').addEventListener('click', exportFamily);
     $('importInput').addEventListener('change', (e) => {
       const file = e.target.files && e.target.files[0];
@@ -1986,6 +2021,7 @@
       if (file) importFamily(file);
     });
 
+    // Reset: erase the tree after a confirmation.
     $('resetBtn').addEventListener('click', () => {
       if (
         !confirm('Erase your whole ROOTS tree? This can’t be undone. (Use "Save a copy" first to keep it.)')
