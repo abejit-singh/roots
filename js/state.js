@@ -79,7 +79,7 @@ function loadState() {
     const parsed = JSON.parse(raw) || {};
     fresh.people = sanitizePeople(parsed.people);
     fresh.interval = cleanInterval(parsed.interval);
-  } catch (e) {
+  } catch {
     /* unreadable data: start fresh rather than crash */
   }
   return fresh;
@@ -94,7 +94,7 @@ export function saveState() {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     return true;
-  } catch (e) {
+  } catch {
     return false;
   }
 }

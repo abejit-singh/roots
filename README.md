@@ -23,15 +23,15 @@ All numbers are computed live from what you enter. Nothing is hardcoded or simul
 
 ## How the numbers are calculated
 
-| Figure | Formula |
-| --- | --- |
-| Places in each generation | 2ⁿ ancestors n generations back: 2 parents, 4 grandparents, 8 great-grandparents… |
-| People in total | 2ⁿ⁺¹ − 2 between you and generation n |
-| Places in the tree | each person has a number: you are 1, and anyone's father is 2 × their number and their mother 2 × their number + 1 (the Ahnentafel numbering genealogists use). A number alone tells a person's generation, side of the family and exact relationship to you. |
-| Years per generation | the average gap between a parent's year of birth and their child's, over every pair where both are known; 28 years when there are none (a common estimate). It can also be set with a slider. |
-| Born around | your year of birth − generations back × years per generation |
-| Family history | this year − the earliest year of birth in your tree |
-| Overlapping lives | ancestors still living, or who died in or after your year of birth |
+| Figure                    | Formula                                                                                                                                                                                                                                                       |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Places in each generation | 2ⁿ ancestors n generations back: 2 parents, 4 grandparents, 8 great-grandparents…                                                                                                                                                                             |
+| People in total           | 2ⁿ⁺¹ − 2 between you and generation n                                                                                                                                                                                                                         |
+| Places in the tree        | each person has a number: you are 1, and anyone's father is 2 × their number and their mother 2 × their number + 1 (the Ahnentafel numbering genealogists use). A number alone tells a person's generation, side of the family and exact relationship to you. |
+| Years per generation      | the average gap between a parent's year of birth and their child's, over every pair where both are known; 28 years when there are none (a common estimate). It can also be set with a slider.                                                                 |
+| Born around               | your year of birth − generations back × years per generation                                                                                                                                                                                                  |
+| Family history            | this year − the earliest year of birth in your tree                                                                                                                                                                                                           |
+| Overlapping lives         | ancestors still living, or who died in or after your year of birth                                                                                                                                                                                            |
 
 ## Running it locally
 
@@ -67,15 +67,15 @@ A family tree holds information about other people too, some of them living. Kee
 
 Vanilla HTML, CSS and JavaScript in three plain, fully commented files. No frameworks, no build tools, no external JavaScript. The tree is drawn directly as SVG.
 
-| File | Purpose |
-| --- | --- |
-| `index.html` | The page: the markup of every section |
-| `css/style.css` | All the styles, organised by section, with a contents list at the top |
-| `js/script.js` | All the behaviour: state and saving, calculations, rendering, events |
-| `manifest.json` | App name, colours and icons for installation |
-| `service-worker.js` | Offline support and instant updates |
-| `icons/` | App icons: `icon-192.png`, `icon-512.png`, `apple-touch-icon.png`, `favicon-32.png` |
-| `.nojekyll` | Tells GitHub Pages to publish the files as they are |
+| File                | Purpose                                                                             |
+| ------------------- | ----------------------------------------------------------------------------------- |
+| `index.html`        | The page: the markup of every section                                               |
+| `css/style.css`     | All the styles, organised by section, with a contents list at the top               |
+| `js/script.js`      | All the behaviour: state and saving, calculations, rendering, events                |
+| `manifest.json`     | App name, colours and icons for installation                                        |
+| `service-worker.js` | Offline support and instant updates                                                 |
+| `icons/`            | App icons: `icon-192.png`, `icon-512.png`, `apple-touch-icon.png`, `favicon-32.png` |
+| `.nojekyll`         | Tells GitHub Pages to publish the files as they are                                 |
 
 ## Disclaimer
 

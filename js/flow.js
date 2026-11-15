@@ -133,7 +133,7 @@ export function importFamily(file) {
     try {
       data = JSON.parse(reader.result);
       people = sanitizePeople(data && data.people);
-    } catch (e) {
+    } catch {
       people = {};
     }
     if (!people[1]) {

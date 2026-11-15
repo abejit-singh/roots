@@ -95,7 +95,8 @@ body::before {
   inset: -15%;
   z-index: -1;
   pointer-events: none;
-  background: radial-gradient(38% 32% at 16% 12%, rgba(163, 196, 111, 0.075), transparent 72%),
+  background:
+    radial-gradient(38% 32% at 16% 12%, rgba(163, 196, 111, 0.075), transparent 72%),
     radial-gradient(34% 30% at 86% 88%, rgba(217, 160, 102, 0.08), transparent 72%);
   animation: drift 36s ease-in-out infinite alternate;
 }
@@ -834,7 +835,8 @@ input[type='range']::-moz-range-track {
   border-radius: 24px;
   overflow: hidden;
   border: 1px solid var(--border);
-  background: radial-gradient(
+  background:
+    radial-gradient(
       560px circle at var(--px, 50%) var(--py, 30%),
       rgba(217, 160, 102, calc(var(--light, 0) * 0.07)),
       transparent 70%
@@ -1436,15 +1438,13 @@ input[type='range']::-moz-range-track {
   max-width: none;
   margin-top: 0;
 }
+/* The result card leans towards the mouse (--rx / --ry, setupPointerEffects). */
 .numbers-result {
   position: relative;
   overflow: hidden;
   padding: 2.2rem 2rem;
   border-radius: 22px;
   text-align: center;
-}
-/* The result card leans towards the mouse (--rx / --ry, setupPointerEffects). */
-.numbers-result {
   transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
   transition:
     --light 0.5s var(--ease),

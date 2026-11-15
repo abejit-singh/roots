@@ -61,10 +61,10 @@ function bindTree() {
   // With the keyboard, the person in focus lights their line too.
   svg.addEventListener('focusin', (e) => {
     const node = nodeOf(e.target);
-    let visible = false;
+    let visible;
     try {
       visible = node && node.matches(':focus-visible');
-    } catch (err) {
+    } catch {
       visible = !!node;
     }
     if (visible) lightLineage(state.people[+node.getAttribute('data-n')] ? +node.getAttribute('data-n') : 0);
@@ -171,7 +171,7 @@ export function bindEvents() {
       return;
     try {
       localStorage.removeItem(STORAGE_KEY);
-    } catch (err) {
+    } catch {
       /* storage unavailable: nothing to erase */
     }
     location.reload();
