@@ -6,9 +6,14 @@
 
 ROOTS is a single-page, interactive family tree that grows downwards, like roots: you at the surface, and every generation of your family a layer deeper. Add the people you know, and see how far back your family goes, where it was born, how its lives overlapped with yours, and how many people it took to make you.
 
-No backend, no build step, no dependencies to install. Everything runs client-side and saves to your browser's `localStorage`.
+No backend, no framework, no build step. Everything runs in the browser and is saved in its `localStorage`.
 
-## Live features
+<p>
+  <img src="docs/screenshot-desktop.jpg" alt="A family drawn as roots: you at the surface, parents, grandparents and great-grandparents below" width="72%">
+  <img src="docs/screenshot-phone.jpg" alt="The same tree on a phone" width="24%">
+</p>
+
+## Features
 
 - **Your root system.** Your family drawn as roots under the ground, five generations deep: parents, grandparents, great-grandparents and two more, 62 ancestors in all. Every person you add grows two new roots, their father and their mother, so the tree grows one generation at a time. Hover (or focus) anyone to light up the line that connects them to you.
 - **Everyone's details.** Name, year of birth and of death (or still living), town and country of birth, and a short story, edited in a side panel (a bottom sheet on phones). The years are checked, so a parent can never be born after their child.
@@ -35,47 +40,106 @@ All numbers are computed live from what you enter. Nothing is hardcoded or simul
 
 ## Running it locally
 
-No installation required.
+You need [Node.js](https://nodejs.org) 22 or later.
 
-1. Download the repository (on GitHub: **Code → Download ZIP**) and unzip it.
-2. Open `index.html` in any modern browser (double-click, or drag it into a browser window). Keep the folders as they are (`css/`, `js/`, `icons/`).
+```sh
+npm install
+npm start
+```
 
-An internet connection is used only to load Google Fonts (Inter, Space Grotesk, Fraunces, JetBrains Mono) on first load. Everything else works offline.
+Then open <http://127.0.0.1:5173>.
+
+The page is made of ES modules, which browsers only load from a server: opening `index.html` with a double-click shows an empty page. `npm start` runs a small static server; any other one works too.
+
+## Scripts
+
+| Command             | What it does                                              |
+| ------------------- | --------------------------------------------------------- |
+| `npm start`         | Serves the site at `http://127.0.0.1:5173`                |
+| `npm run lint`      | ESLint, Stylelint and a Prettier formatting check         |
+| `npm run format`    | Formats every file with Prettier                          |
+| `npm run test:unit` | Unit tests of the calculations and the saved data         |
+| `npm run test:e2e`  | The page in a real browser, at a desktop and a phone size |
+| `npm test`          | Both kinds of test                                        |
+
+The browser tests use [Playwright](https://playwright.dev), which needs its browser once: `npx playwright install chromium`.
+
+## Project structure
+
+```
+index.html            the page: the markup of every section
+css/
+  fonts.css           the typefaces the site serves itself
+  style.css           every style, by section, with a contents list at the top
+js/
+  main.js             entry point: starts the app
+  config.js           constants, limits, generation names, the list of countries
+  utils.js            small helpers: text, numbers, countries and flags
+  slots.js            the numbering of the places in the tree
+  state.js            the saved data: loading, checking, saving
+  family.js           questions about the family: who is known, how far back
+  effects.js          motion: counting numbers, sliders, pointer effects
+  tree.js             the tree, drawn in SVG as roots
+  generations.js      figures and one row per generation
+  origins.js          where the family was born
+  numbers.js          ancestors doubling at every generation
+  lifelines.js        every life on one timeline
+  finale.js           the closing screen and "Who should I ask about?"
+  panel.js            adding, editing and removing a person
+  flow.js             from the setup form to the tree; saving and loading a copy
+  events.js           every event listener
+fonts/                the typefaces (woff2) and their licences
+icons/                the app icons
+images/               the preview shown when the link is shared
+docs/                 the screenshots on this page
+tests/
+  unit/               the calculations and the saved data, run in Node
+  e2e/                the page in a real browser (Playwright)
+manifest.json         app name, colours and icons for installation
+service-worker.js     offline support
+```
+
+## How it is built
+
+- **No framework and no build step.** Plain HTML, CSS and JavaScript. The files in this repository are the files the browser runs, and GitHub Pages serves the `main` branch as it is.
+- **ES modules.** One module for each part of the page, loaded by the browser from `js/main.js`. The foundation (`config.js` → `utils.js` → `state.js`) imports nothing from the modules built on top of it.
+- **One state object.** Everything the user enters lives in one object, saved to `localStorage` after every change. When it is read back every field is checked, so damaged or hand-edited data cannot break the page.
+- **Rendering.** Each section has a function that rebuilds its markup from the state. Text typed by the user is escaped before it is inserted.
+- **A number for every place in the tree.** You are 1; anyone's father is 2 × their number and their mother 2 × their number + 1 (the Ahnentafel numbering genealogists use). Generation, side of the family and relationship are all read from that number (`js/slots.js`), so the tree needs no links between people.
+- **The tree is an SVG redrawn from the data.** `js/tree.js` rebuilds it on every change. The small hand-drawn details come from a seeded random generator, so the roots look the same on every visit.
+- **A copy you can keep.** The tree can be saved as a JSON file and loaded back; a loaded file goes through the same checks as the saved data.
+- **Nothing comes from another site.** The typefaces (Inter, Space Grotesk, Fraunces and JetBrains Mono) are served from this repository, and a Content Security Policy (`default-src 'self'`) makes the browser refuse anything else.
+- **Offline.** A service worker keeps a copy of the app. Online, the page is always fetched fresh, so an update shows immediately; the copy is only used when there is no connection.
+- **Motion is optional.** Animations are switched off for people who ask their system for reduced motion.
+
+## Quality
+
+- **Tests.** Unit tests for the calculations and for the data read back from storage; browser tests that use the page the way a visitor does, including reopening it with no connection and checking that it calls no other site.
+- **Accessibility.** Labelled controls, keyboard access and text contrast that meets WCAG AA, checked with axe on the empty page and with data. One known exception: axe's "label in name" rule flags the people in the tree, whose visible text (initials, a shortened name) is shorter than their accessible name (full name, relationship, years).
+- **Lighthouse** (phone profile, on a local copy served the way GitHub Pages serves it, November 2026): Performance 98 · Accessibility 100 · Best Practices 100 · SEO 100.
 
 ## Installing as an app (PWA)
 
-ROOTS is a Progressive Web App. Once it's hosted over HTTPS (for example on GitHub Pages), you can install it like a native app, with its own icon (an "R." monogram matching the site's wordmark) and offline support.
+ROOTS is a Progressive Web App: on the live site you can install it like a native app, with an "R." monogram matching the site's wordmark, and it keeps working offline.
 
 - **On mobile:** open the site, then use your browser's "Add to Home Screen" option (Safari: Share → Add to Home Screen; Chrome: menu → Install app).
 - **On desktop:** Chrome and Edge show an install icon in the address bar.
 
-When you're online the page is always loaded fresh, so updates appear immediately. The saved copy is only used offline. The install prompt and offline mode only activate over HTTPS. Opening `index.html` directly from disk (`file://`) works for everything else.
-
 ## Privacy
 
-ROOTS collects nothing and sends nothing to any server it controls. There is no backend at all.
+ROOTS collects nothing and sends nothing anywhere. There is no backend at all.
 
 - **What's stored:** the people you add (names, years, places and stories) and the years-per-generation setting. They are saved only in your browser's `localStorage`, under the key `roots_state_v1`.
 - **Where it goes:** nowhere. It never leaves your device. There's no analytics, tracking, cookies or logging of any kind. "Save a copy" downloads a file to your own device; nothing is uploaded.
-- **The one external request:** Google Fonts (`fonts.googleapis.com`, `fonts.gstatic.com`), to load the site's typefaces. Like any font or image load on any website, this exposes your IP address to Google as a normal side effect of the request. ROOTS itself doesn't send Google, or anyone, any of your data.
-- **Security:** a Content Security Policy lets the page run only its own `script.js` and blocks any outside script or connection. All text you type is escaped before it is displayed, and saved data, and any file you load, is validated every time it is read.
+- **Outside requests:** none. The page and its fonts come from this site, and the Content Security Policy blocks any other connection.
+- **Security:** all text you enter is escaped before it is displayed, and saved data, and any file you load, is validated every time it is read.
 - **Clearing your data:** use the reset button (bottom-left of the site) at any time.
 
 A family tree holds information about other people too, some of them living. Keeping it on your own device, rather than on a server, is deliberate.
 
-## Tech
+## Third-party files
 
-Vanilla HTML, CSS and JavaScript in three plain, fully commented files. No frameworks, no build tools, no external JavaScript. The tree is drawn directly as SVG.
-
-| File                | Purpose                                                                             |
-| ------------------- | ----------------------------------------------------------------------------------- |
-| `index.html`        | The page: the markup of every section                                               |
-| `css/style.css`     | All the styles, organised by section, with a contents list at the top               |
-| `js/script.js`      | All the behaviour: state and saving, calculations, rendering, events                |
-| `manifest.json`     | App name, colours and icons for installation                                        |
-| `service-worker.js` | Offline support and instant updates                                                 |
-| `icons/`            | App icons: `icon-192.png`, `icon-512.png`, `apple-touch-icon.png`, `favicon-32.png` |
-| `.nojekyll`         | Tells GitHub Pages to publish the files as they are                                 |
+Fonts: see [`fonts/README.md`](fonts/README.md) (SIL Open Font License).
 
 ## Disclaimer
 
