@@ -2,6 +2,8 @@
 
 **Where do you come from?**
 
+[![CI](https://github.com/abejit-singh/roots/actions/workflows/ci.yml/badge.svg)](https://github.com/abejit-singh/roots/actions/workflows/ci.yml)
+
 **Live:** [abejit-singh.github.io/roots](https://abejit-singh.github.io/roots/)
 
 ROOTS is a single-page, interactive family tree that grows downwards, like roots: you at the surface, and every generation of your family a layer deeper. Add the people you know, and see how far back your family goes, where it was born, how its lives overlapped with yours, and how many people it took to make you.
@@ -63,6 +65,8 @@ The page is made of ES modules, which browsers only load from a server: opening 
 | `npm test`          | Both kinds of test                                        |
 
 The browser tests use [Playwright](https://playwright.dev), which needs its browser once: `npx playwright install chromium`.
+
+The same checks run on GitHub Actions at every push (`.github/workflows/ci.yml`).
 
 ## Project structure
 
