@@ -26,12 +26,20 @@
 <meta name="theme-color" content="#15120E">
 <title>ROOTS — Where do you come from?</title>
 <meta name="description" content="Trace your family back through the generations, and see how many lives led to yours.">
+<link rel="canonical" href="https://abejit-singh.github.io/roots/">
+<!-- How a link to the site looks when it is shared: title, description and a preview image. -->
 <meta property="og:title" content="ROOTS — Where do you come from?">
 <meta property="og:description" content="Trace your family back through the generations, and see how many lives led to yours.">
 <meta property="og:type" content="website">
-<meta name="twitter:card" content="summary">
+<meta property="og:url" content="https://abejit-singh.github.io/roots/">
+<meta property="og:image" content="https://abejit-singh.github.io/roots/images/social-preview.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The opening screen of ROOTS: “Where do you come from?”">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="ROOTS — Where do you come from?">
 <meta name="twitter:description" content="Trace your family back through the generations, and see how many lives led to yours.">
+<meta name="twitter:image" content="https://abejit-singh.github.io/roots/images/social-preview.jpg">
 <link rel="icon" type="image/png" href="icons/favicon-32.png">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -54,6 +62,8 @@
 <div class="progress-bar" id="progressBar"></div>
 <button class="reset-btn" id="resetBtn" type="button" title="Reset all data" aria-label="Reset all saved data">↺</button>
 <div class="tooltip" id="tooltip" role="status" aria-hidden="true"></div>
+
+<main>
 
 <!-- 1. HERO -->
 <section class="section hero" id="hero">
@@ -198,6 +208,8 @@
   <div class="ask-card card" id="askCard" aria-live="polite" hidden></div>
 </section>
 
+</main>
+
 <footer>
   <span class="footer-mark">ROOTS<span>.</span></span>
   <span>Where do you come from?</span>
@@ -205,7 +217,7 @@
     <button class="link-btn" id="exportBtn" type="button">Save a copy</button>
     <label class="link-btn file-label">Load a copy<input type="file" id="importInput" accept="application/json,.json"></label>
   </div>
-  <span>Your family stays on this device — the only outside request is for fonts (Google Fonts).</span>
+  <span>Your family stays on this device — nothing is sent to, or loaded from, any other site.</span>
 </footer>
 
 <div class="panel-scrim" id="panelScrim"></div>
